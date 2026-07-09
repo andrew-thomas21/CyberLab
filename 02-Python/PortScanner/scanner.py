@@ -52,7 +52,24 @@ print_banner()
 
 ip = get_ip()
 print(f"\nTarget selected: {ip}")
-ports = [20,21,22,23,53,67,68,69,80,110,123,143,161,389,443,445,3389]
+
+print("\nSelect Scan Type:")
+print("1) Quick Scan (17 common ports)")
+print("2) Full Scan (Ports 1-1024)")
+
+choice = input("Choice: ")
+
+if choice == "1":
+    print("Quick Scan selected.")
+    ports = [20,21,22,23,53,67,68,69,80,110,123,143,161,389,443,445,3389]
+
+elif choice == "2":
+    print("Full Scan selected.")
+    ports = range(1, 1025)
+
+else:
+    print("Invalid choice. Exiting.")
+    exit()
 
 services = {
     20: "FTP-Data",
