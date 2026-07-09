@@ -1,5 +1,7 @@
 import ipaddress
 import socket
+import time
+from datetime import datetime
 
 MAX_ATTEMPTS = 3
 
@@ -38,10 +40,13 @@ def scan_port(ip, port, services):
 
     if result == 0:
         print(f"Port {port} ({service}) is OPEN")
+        sock.close()
+        return True
     else:
         print(f"Port {port} ({service}) is CLOSED or FILTERED")
+        sock.close()
+        return False
     
-    sock.close()
 
 print_banner()
 
@@ -69,7 +74,42 @@ services = {
     3389: "RDP"
 }
 
-for port in ports:    
-    scan_port(ip, port, services)
+open_ports = []
 
+start_time = time.time()
+
+for port in ports:
+    if scan_port(ip, port, services):
+        open_ports.append(port)
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+
+with open("scan_results.txt", "w") as report:
+    report.write("=" * 40 + "\n")
+    report.write("CyberLab Port Scanner Report\n")
+    report.write("=" * 40 + "\n")
+    report.write(
+    f"Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+)
+    report.write(f"Target: {ip}\n\n")
+
+    for port in open_ports:
+        service = services.get(port, "UNKNOWN")
+        report.write(f"Port {port} ({service}) OPEN\n")
+
+    report.write("\n")
+    report.write(f"Ports scanned: {len(ports)}\n")
+    report.write(f"Open ports: {len(open_ports)}\n")
+    report.write(f"Time elapsed: {elapsed_time:.2f} seconds\n")
+    
+
+print("\n" + "=" * 40)
+print("Scan Summary")
+print("=" * 40)
+print(f"Target: {ip}")
+print(f"Ports scanned: {len(ports)}")
+print(f"Open ports found: {len(open_ports)}")
+print(f"Time elapsed: {elapsed_time:.2f} seconds")
+print("Results saved to scan_results.txt")
 

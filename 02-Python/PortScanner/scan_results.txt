@@ -1,0 +1,12 @@
+========================================
+CyberLab Port Scanner Report
+========================================
+Scan Date: 2026-07-08 21:19:12
+Target: 192.168.1.1
+
+Port 53 (DNS) OPEN
+Port 443 (HTTPS) OPEN
+
+Ports scanned: 17
+Open ports: 2
+Time elapsed: 34.00 seconds
