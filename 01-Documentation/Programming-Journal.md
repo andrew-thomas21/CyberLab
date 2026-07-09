@@ -173,3 +173,169 @@ I also became much more comfortable debugging my own code. Rather than immediate
 - Count open and closed ports.
 - Save scan results to a text file.
 - Continue refactoring the scanner to improve readability.
+
+## July 8
+
+Session 3 – Improving the CyberLab Port Scanner
+Objective
+
+The goal of Session 3 was to improve the functionality and professionalism of the CyberLab Port Scanner by adding execution timing, reporting capabilities, scan summaries, and multiple scan modes. This session also focused heavily on debugging and reinforcing structured problem-solving rather than simply adding new features.
+
+Concepts Learned
+Measuring Program Execution Time
+
+I learned how to use Python's time module to determine how long a scan takes to complete.
+
+import time
+
+start_time = time.time()
+
+# Scan occurs here
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+
+Displaying elapsed time gives users feedback about scanner performance and establishes a baseline for future performance improvements.
+
+Tracking Open Ports
+
+Instead of only printing results to the screen, I began storing successful scans in a list.
+
+open_ports = []
+
+if scan_port(ip, port, services):
+    open_ports.append(port)
+
+This allowed me to calculate statistics after the scan completed.
+
+Generating Scan Reports
+
+I implemented automatic report generation using Python's file handling.
+
+with open("scan_results.txt", "w") as report:
+
+The report now includes:
+
+Scan date and time
+Target IP address
+Open ports discovered
+Total ports scanned
+Number of open ports
+Total scan duration
+
+This creates a permanent record of each scan instead of relying only on terminal output.
+
+Working with Date and Time
+
+I learned how to import Python's datetime module and format timestamps.
+
+from datetime import datetime
+
+datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+Formatting the timestamp produces a clean, readable report.
+
+Scan Modes
+
+The scanner now supports multiple scanning options.
+
+1) Quick Scan (17 Common Ports)
+
+2) Full Scan (Ports 1–1024)
+
+The selected option determines which collection of ports is assigned to the ports variable.
+
+Quick Scan
+
+ports = [20,21,22,...]
+
+Full Scan
+
+ports = range(1,1025)
+
+I learned that by changing only one variable, the remainder of the program continues to function without modification.
+
+Important Programming Concept
+
+One important realization during this session was that the scanner never needs to know how many ports it is scanning.
+
+The scan loop simply processes whatever iterable object is assigned to ports.
+
+Examples include:
+
+ports = [22]
+ports = [20,21,22,80]
+ports = range(1,1025)
+
+Since each option is iterable, the same loop works for every scan type.
+
+Debugging Lessons
+
+During development I encountered:
+
+NameError: report is not defined
+
+Initially I began modifying multiple parts of the program, which introduced additional problems.
+
+The correct approach was to identify:
+
+What changed most recently.
+What the error message specifically stated.
+Why the variable did not yet exist.
+
+The issue was caused by placing:
+
+report.write(...)
+
+outside the
+
+with open(...) as report:
+
+block.
+
+Moving the statement inside the context manager immediately resolved the problem.
+
+This reinforced an important lesson:
+
+Debug the most recent change first instead of assuming the entire program is broken.
+
+Additional Troubleshooting
+
+While working in VirtualBox I experienced two unexpected VirtualBox crashes.
+
+After reviewing:
+
+VirtualBox configuration
+RAM allocation
+CPU allocation
+Graphics settings
+
+it appeared that the Python program itself was not responsible for the crashes.
+
+The issue is more likely related to VirtualBox or the host environment than the scanner.
+
+Key Takeaways
+
+This session reinforced several important software development principles:
+
+Break large problems into small, manageable pieces.
+Reuse existing code instead of duplicating functionality.
+Read error messages carefully before making changes.
+Test each new feature independently.
+Maintain stable versions using Git commits.
+Generate useful output for the end user rather than only for the developer.
+Future Improvements
+
+Planned features include:
+
+Normal Mode (open ports only)
+Verbose Mode (display all scanned ports)
+Custom Port scanning
+Custom Port Range scanning
+Multithreaded scanning
+Service/banner detection
+CSV and JSON report exports
+CIDR network scanning
+Personal Reflection
+
+This session marked a shift from simply writing code to designing software. Instead of only implementing features, I focused on understanding how changes affected the overall architecture of the program. I also learned the importance of trusting the debugging process rather than making random changes when errors occur. Successfully resolving the NameError and implementing scan modes increased my confidence in reading Python error messages and making targeted fixes.
