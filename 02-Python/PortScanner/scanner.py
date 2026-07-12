@@ -30,7 +30,7 @@ def get_ip():
             exit()
     
 
-def scan_port(ip, port, services):
+def scan_port(ip, port, services, verbose):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(3)
 
@@ -43,7 +43,8 @@ def scan_port(ip, port, services):
         sock.close()
         return True
     else:
-        print(f"Port {port} ({service}) is CLOSED or FILTERED")
+        if verbose:
+            print(f"Port {port} ({service}) is CLOSED or FILTERED")
         sock.close()
         return False
     
@@ -61,11 +62,31 @@ choice = input("Choice: ")
 
 if choice == "1":
     print("Quick Scan selected.")
+    scan_type = "Quick"
     ports = [20,21,22,23,53,67,68,69,80,110,123,143,161,389,443,445,3389]
 
 elif choice == "2":
     print("Full Scan selected.")
+    scan_type = "Full"
     ports = range(1, 1025)
+
+else:
+    print("Invalid choice. Exiting.")
+    exit()
+
+print("\nSelect Output Mode:")
+print("1) Normal (Open ports only)")
+print("2) Verbose (Show all ports)")
+
+output_choice = input("Choice: ")
+
+if output_choice == "1":
+    verbose = False
+    print("Normal output selected.")
+
+elif output_choice == "2":
+    verbose = True
+    print("Verbose output selected.")
 
 else:
     print("Invalid choice. Exiting.")
@@ -96,7 +117,7 @@ open_ports = []
 start_time = time.time()
 
 for port in ports:
-    if scan_port(ip, port, services):
+    if scan_port(ip, port, services, verbose):
         open_ports.append(port)
 
 end_time = time.time()
@@ -110,6 +131,7 @@ with open("scan_results.txt", "w") as report:
     f"Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
 )
     report.write(f"Target: {ip}\n\n")
+    report.write(f"Scan Type: {scan_type}\n")
 
     for port in open_ports:
         service = services.get(port, "UNKNOWN")
