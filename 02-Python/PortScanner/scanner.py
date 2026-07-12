@@ -28,7 +28,23 @@ def get_ip():
         else:
             print("\nInvalid IP address. Maximum attempts reached. Exiting.")
             exit()
-    
+
+def get_output_mode():
+    while True:
+        print("\nSelect Output Mode:")
+        print("1) Normal (Open ports only)")
+        print("2) Verbose (Show all ports)")
+
+        output_choice = input("Choice: ")
+
+        if output_choice == "1":
+            return False, "Normal"
+        
+        elif output_choice == "2":
+            return True, "Verbose"
+        
+        else:
+            print("Invalid choice. Enter 1 or 2.")    
 
 def scan_port(ip, port, services, verbose):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,8 +62,7 @@ def scan_port(ip, port, services, verbose):
         if verbose:
             print(f"Port {port} ({service}) is CLOSED or FILTERED")
         sock.close()
-        return False
-    
+        return False    
 
 print_banner()
 
@@ -88,34 +103,14 @@ elif choice == "3":
             print("Invalid port number. Enter a value between 1 and 65535.")
 
         except ValueError:
-            print("Invalid input. Enter numbers only.")
-
-    
+            print("Invalid input. Please enter a port number between 1 and 65535.")    
 
 
 else:
     print("Invalid choice. Exiting.")
     exit()
 
-print("\nSelect Output Mode:")
-print("1) Normal (Open ports only)")
-print("2) Verbose (Show all ports)")
-
-output_choice = input("Choice: ")
-
-if output_choice == "1":
-    verbose = False
-    output_mode = "Normal"
-    print("Normal output selected.")
-
-elif output_choice == "2":
-    verbose = True
-    output_mode = "Verbose"
-    print("Verbose output selected.")
-
-else:
-    print("Invalid choice. Exiting.")
-    exit()
+verbose, output_mode = get_output_mode()
 
 services = {
     20: "FTP-Data",
