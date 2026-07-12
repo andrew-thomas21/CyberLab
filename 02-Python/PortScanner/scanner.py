@@ -32,7 +32,7 @@ def get_ip():
 
 def scan_port(ip, port, services, verbose):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(3)
+    sock.settimeout(.5)
 
     result = sock.connect_ex((str(ip), port))
 
@@ -57,6 +57,7 @@ print(f"\nTarget selected: {ip}")
 print("\nSelect Scan Type:")
 print("1) Quick Scan (17 common ports)")
 print("2) Full Scan (Ports 1-1024)")
+print("3) Custom Port Scan")
 
 choice = input("Choice: ")
 
@@ -70,6 +71,28 @@ elif choice == "2":
     scan_type = "Full"
     ports = range(1, 1025)
 
+elif choice == "3":
+    print("Custom Port selected.")
+    scan_type = "Custom Port"
+
+    while True:
+        port_input = input("Enter Port Number: ")
+
+        try:
+            port = int(port_input)
+
+            if 1 <= port <= 65535:
+                ports = [port]
+                break
+
+            print("Invalid port number. Enter a value between 1 and 65535.")
+
+        except ValueError:
+            print("Invalid input. Enter numbers only.")
+
+    
+
+
 else:
     print("Invalid choice. Exiting.")
     exit()
@@ -82,10 +105,12 @@ output_choice = input("Choice: ")
 
 if output_choice == "1":
     verbose = False
+    output_mode = "Normal"
     print("Normal output selected.")
 
 elif output_choice == "2":
     verbose = True
+    output_mode = "Verbose"
     print("Verbose output selected.")
 
 else:
@@ -132,6 +157,8 @@ with open("scan_results.txt", "w") as report:
 )
     report.write(f"Target: {ip}\n\n")
     report.write(f"Scan Type: {scan_type}\n")
+    report.write(f"Scan Type: {scan_type}\n")
+    report.write(f"Output Mode: {output_mode}\n\n")
 
     for port in open_ports:
         service = services.get(port, "UNKNOWN")
@@ -147,6 +174,8 @@ print("\n" + "=" * 40)
 print("Scan Summary")
 print("=" * 40)
 print(f"Target: {ip}")
+print(f"Scan Type: {scan_type}")
+print(f"Output Mode: {output_mode}\n\n")
 print(f"Ports scanned: {len(ports)}")
 print(f"Open ports found: {len(open_ports)}")
 print(f"Time elapsed: {elapsed_time:.2f} seconds")
